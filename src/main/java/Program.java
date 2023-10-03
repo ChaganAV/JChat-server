@@ -1,6 +1,6 @@
 public class Program {
     public static void main(String[] args) {
         new ChatServer();
-        new ChatClient();
+        Observer first = new Server("first");
     }
 }
