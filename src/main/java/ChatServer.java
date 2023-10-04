@@ -45,7 +45,12 @@ public class ChatServer extends JFrame {
                 revalidate();
             }
         });
-
+        btnExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Stop");
+            }
+        });
         pnlCenter.add(textMessages);
         footer.add(btnStart);
         footer.add(btnExit);
@@ -55,40 +60,7 @@ public class ChatServer extends JFrame {
     }
 
     private void startServer(){
-        try {
-            ServerSocket listener = new ServerSocket(PORT);
-            final boolean[] stop = {false};
-            while (!stop[0]){
-                System.out.println("starting...");
-
-
-                Socket client = listener.accept(); // ждем подключения
-                InputStream in = client.getInputStream();
-                OutputStream out = client.getOutputStream();
-
-                BufferedReader bin = new BufferedReader(new InputStreamReader(in));
-                String someString = bin.readLine();
-                textMessages.setText(someString+"\n");
-                // отправим ответ
-
-                String response = "Вот ответ: ";
-                PrintWriter pout = new PrintWriter(out,true);
-                pout.println(response+someString);
-                pout.close();
-                client.close();
-
-                btnExit.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        stop[0] = true;
-                        System.out.println("Stop");
-                    }
-                });
-            }
-
-            listener.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        SocketSrv server = new SocketSrv(PORT);
+        server.run(btnExit);
     }
 }
