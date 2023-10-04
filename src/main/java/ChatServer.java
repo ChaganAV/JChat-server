@@ -22,6 +22,7 @@ public class ChatServer extends JFrame {
 
     JButton btnStart = new JButton("Start");
     JButton btnExit = new JButton("Stop");
+    private boolean start = false;
     ChatServer(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
@@ -29,11 +30,21 @@ public class ChatServer extends JFrame {
         setTitle("Chat server");
         setResizable(false); // запрет на изменение размера
 
+        Color colorDefault = btnStart.getBackground();
 
+        SocketSrv server = new SocketSrv(PORT);
+        Notify notify = new Notify();
+        UserNotify startNotify = new UserNotify();
+        UserNotify exitNotify = new UserNotify();
+        notify.addSubscriber(startNotify);
+        notify.addSubscriber(server);
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startServer();
+                btnStart.setBackground(Color.GREEN);
+                start = true;
+                notify.change(String.valueOf(btnStart.getText()));
+                revalidate();
                 System.out.println("Starting...");
             }
         });
@@ -45,10 +56,13 @@ public class ChatServer extends JFrame {
                 revalidate();
             }
         });
+
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Stop");
+                notify.change(btnExit.getText());
+                btnStart.setBackground(colorDefault);
+                //System.out.println("Stop");
             }
         });
         pnlCenter.add(textMessages);
@@ -60,7 +74,7 @@ public class ChatServer extends JFrame {
     }
 
     private void startServer(){
-        SocketSrv server = new SocketSrv(PORT);
-        server.run(btnExit);
+
+
     }
 }

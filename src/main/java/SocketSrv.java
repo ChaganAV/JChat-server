@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocketSrv {
+public class SocketSrv implements Subscriber{
     private List<String> data = new ArrayList<>();
     private int port;
     private boolean stop = false;
@@ -15,7 +15,20 @@ public class SocketSrv {
         this.port = port;
 
     }
-    public void run(JButton btn){
+
+    @Override
+    public void showNotification(String text) {
+        System.out.println("Кнопка: "+ text);
+        if(text.equals("start")){
+            stop = false;
+        }
+        if(text.equals("stop")){
+            stop = true;
+        }
+        run();
+    }
+
+    public void run(){
         try {
             ServerSocket listener = new ServerSocket(port);
             while (!stop){
@@ -35,7 +48,8 @@ public class SocketSrv {
                 pout.println(response+someString);
                 pout.close();
                 client.close();
-                btnHandler(btn);
+
+                //btnHandler(btn);
             }
 
             listener.close();
