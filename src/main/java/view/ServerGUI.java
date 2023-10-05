@@ -1,15 +1,17 @@
+package view;
+
+import controler.Notify;
+import controler.SocketSrv;
+import controler.UserNotify;
+
 import javax.swing.*;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 
-public class ChatServer extends JFrame {
+public class ServerGUI extends JFrame {
     private static final int WINDOW_HEIGHT = 420;
     private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_POSX = 500;
@@ -23,7 +25,7 @@ public class ChatServer extends JFrame {
     JButton btnStart = new JButton("Start");
     JButton btnExit = new JButton("Stop");
     private boolean start = false;
-    ChatServer(){
+    ServerGUI(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH,WINDOW_HEIGHT);

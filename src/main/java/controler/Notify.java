@@ -1,7 +1,9 @@
+package controler;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Notify implements Publisher{
+public class Notify implements Publisher {
     private List<Subscriber> subscribers = new ArrayList<>();
     private List<String> messages = new ArrayList<>();
     @Override

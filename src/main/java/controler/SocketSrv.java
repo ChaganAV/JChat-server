@@ -1,3 +1,5 @@
+package controler;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,11 +9,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocketSrv implements Subscriber{
+public class SocketSrv implements Subscriber {
     private List<String> data = new ArrayList<>();
     private int port;
     private boolean stop = false;
-    SocketSrv(int port){
+    public SocketSrv(int port){
         this.port = port;
 
     }
