@@ -1,7 +1,7 @@
 package view;
 
 import model.Client;
-import model.Clientable;
+import model.Sender;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -9,15 +9,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ClientGUI extends JFrame {
+public class ClientView extends JFrame {
+    // region field
     private Client client;
     private static final int WINDOW_HEIGHT = 420;
     private static final int WINDOW_WIDTH = 360;
     private static final int WINDOW_POSX = 800;
     private static final int WINDOW_POSY = 300;
-    private static final String MSG_SERVER_501 = "Сервер не доступен";
+    // endregion
 
-    // header
+    // region header
     JPanel pnlHeader = new JPanel(new GridLayout(2, 1));
     JPanel pnlAddress = new JPanel(new GridLayout(1, 3));
     JPanel pnlLogin = new JPanel(new GridLayout(1, 3));
@@ -25,31 +26,34 @@ public class ClientGUI extends JFrame {
     JTextField textAddress = new JTextField();
     JTextField textPort = new JTextField();
     JTextField textLogin = new JTextField();
-    Box boxLogin = Box.createHorizontalBox();
-    JButton btnEmpty = new JButton();
+    JButton btnBoard = new JButton("Disconnected");
+    Color colorDefault = btnBoard.getBackground();
     JTextField textPassword = new JTextField();
     JButton btnLogin = new JButton("login");
+    // endregion
 
-    // центр
+    // region центр
     JPanel pnlCenter = new JPanel();
     JTextArea textMessages = new JTextArea();
     Document doc = textMessages.getDocument();
+    // endregion
 
-    // footer
+    // region footer
     Container boxHorizonal = Box.createHorizontalBox();
-    JTextField textInput = new JTextField(20);
-    JButton btnInput = new JButton("send");
+    JTextField textSend = new JTextField(20);
+    JButton btnSend = new JButton("send");
+    // endregion
 
-    public ClientGUI(String name) {
-        this.client = new Client(name);
+    public ClientView(Client client) {
+        this.client = client;
 
         setting();
+        // region panels
 
         pnlAddress.add(textAddress);
         pnlAddress.add(textPort);
-        //pnlAddress.add(Box.createHorizontalStrut(10));
-        btnEmpty.setEnabled(false);
-        pnlAddress.add(btnEmpty);
+        btnBoard.setEnabled(false);
+        pnlAddress.add(btnBoard);
 
         pnlLogin.add(textLogin);
         pnlLogin.add(textPassword);
@@ -58,44 +62,39 @@ public class ClientGUI extends JFrame {
         pnlHeader.add(pnlAddress);
         pnlHeader.add(pnlLogin);
 
-        textInput.setSize(new Dimension(300, 35));
-        textInput.setFont(new Font("Times New Roman", Font.BOLD, 18));
-        textInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand() != null) {
-                    if (!sendMessage(textInput.getText().trim())) {
-                        textMessages.append(MSG_SERVER_501 + "\n");
-                    }
-                }
-            }
-        });
-        btnInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (textInput.getText().trim().length() > 0) {
-                    if (!sendMessage(textInput.getText().trim())) {
-                        textMessages.append(MSG_SERVER_501 + "\n");
-                    }
-                }
-            }
+        textSend.setSize(new Dimension(300, 35));
+        textSend.setFont(new Font("Times New Roman", Font.BOLD, 18));
+        // endregion
 
-//            void revalidate() {
-//
-//            }
-        });
+        // region actions
         btnLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(connected()){
-                    btnEmpty.setBackground(Color.GREEN);
-                    btnEmpty.setText("Connected");
-                    //System.out.println("Connected");
+                connected();
+            }
+        });
+
+        textSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand() != null) {
+                    sendMessage(textSend.getText().trim());
                 }
             }
         });
-        boxHorizonal.add(textInput);
-        boxHorizonal.add(btnInput);
+        btnSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (textSend.getText().trim().length() > 0) {
+                    sendMessage(textSend.getText().trim());
+                }
+            }
+        });
+        // endregion
+
+        // region visible
+        boxHorizonal.add(textSend);
+        boxHorizonal.add(btnSend);
         pnlFooter.add(boxHorizonal);
 
         pnlCenter.add(textMessages);
@@ -105,14 +104,17 @@ public class ClientGUI extends JFrame {
         add(pnlFooter, BorderLayout.SOUTH);
         revalidate();
         setVisible(true);
+        // endregion
     }
 
+    // region methods
     private void setting() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        textAddress.setText(client.getURL());
+        textAddress.setText(client.getUrl());
         textPort.setText(String.valueOf(client.getPort()));
+        textLogin.setText(String.valueOf(client.getName()));
         setTitle("Chat client");
         setResizable(false); // запрет на изменение размера
     }
@@ -136,15 +138,35 @@ public class ClientGUI extends JFrame {
         textMessages.append(msg + "\n");
     }
 
-    private boolean sendMessage(String msg) {
-        boolean result = client.sendMessage(msg);
-        if(result) {
-            textMessages.append(textInput.getText() + "\n");
-            textInput.setText("");
+    private void sendMessage(String msg) {
+        if(client.isConnected()) {
+            boolean result = client.sendMessage(msg);
+            if (result) {
+                textMessages.append(textSend.getText() + "\n");
+                textSend.setText("");
+            } else {
+                textMessages.append(client.getErrorServer() + "\n");
+            }
+        }else {
+            textMessages.append(client.getMSG_CLIENT_ERROR() + "\n");
         }
-        return result;
     }
-    private boolean connected(){
-        return client.connected();
+    private void connected(){
+        if(!client.isConnected()){
+            if(client.connected()) {
+                btnBoard.setBackground(Color.GREEN);
+                btnBoard.setText("Connected");
+                btnLogin.setText("Logout");
+            }else{
+                textMessages.append(client.getErrorServer() + "\n");
+            }
+        }else{
+            client.setConnected(false);
+            btnBoard.setBackground(colorDefault);
+            btnBoard.setText("Disconnected");
+            btnLogin.setText("Login");
+        }
+
     }
+    // endregion
 }

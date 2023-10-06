@@ -3,6 +3,7 @@ package view;
 import controler.Notify;
 import controler.SocketSrv;
 import controler.UserNotify;
+import model.Server;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,21 +12,26 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class ServerGUI extends JFrame {
+public class ServerView extends JFrame {
+    // region fields
     private static final int WINDOW_HEIGHT = 420;
     private static final int WINDOW_WIDTH = 300;
     private static final int WINDOW_POSX = 500;
     private static final int WINDOW_POSY = 200;
     private static final int PORT = 56565;
+    private boolean start = false;
+    private Server server;
+    // endregion
 
+    // region panels
     JPanel footer = new JPanel(new GridLayout(1,2));
     JPanel pnlCenter = new JPanel();
     JTextArea textMessages = new JTextArea();
 
     JButton btnStart = new JButton("Start");
     JButton btnExit = new JButton("Stop");
-    private boolean start = false;
-    ServerGUI(){
+    // endregion
+    ServerView(Server server){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -34,12 +40,12 @@ public class ServerGUI extends JFrame {
 
         Color colorDefault = btnStart.getBackground();
 
-        SocketSrv server = new SocketSrv(PORT);
+        SocketSrv socketSrv = new SocketSrv(PORT);
         Notify notify = new Notify();
         UserNotify startNotify = new UserNotify();
         UserNotify exitNotify = new UserNotify();
         notify.addSubscriber(startNotify);
-        notify.addSubscriber(server);
+        notify.addSubscriber(socketSrv);
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -1,5 +1,5 @@
 package model;
 
-public interface Serverable {
+public interface Resiver {
     public void working();
 }
