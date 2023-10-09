@@ -2,7 +2,7 @@ package model;
 
 import data.Repository;
 
-public class Client implements Sender, Repository {
+public class Client implements Sender {
     // region fields
     private String url = "192.168.9.104";
     private int port = 56565;
@@ -24,10 +24,6 @@ public class Client implements Sender, Repository {
     @Override
     public boolean sendMessage(String msg) {
         return true;
-    }
-
-    @Override
-    public void getLog() {
     }
 
     // region getters

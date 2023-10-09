@@ -31,7 +31,7 @@ public class ServerView extends JFrame {
     JButton btnStart = new JButton("Start");
     JButton btnExit = new JButton("Stop");
     // endregion
-    ServerView(Server server){
+    public ServerView(Server server){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -51,7 +51,8 @@ public class ServerView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 btnStart.setBackground(Color.GREEN);
                 start = true;
-                notify.change(String.valueOf(btnStart.getText()));
+                server.setWork(start);
+                //notify.change(String.valueOf(btnStart.getText()));
                 revalidate();
                 System.out.println("Starting...");
             }
@@ -68,7 +69,8 @@ public class ServerView extends JFrame {
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                notify.change(btnExit.getText());
+                server.setWork(true);
+                //notify.change(btnExit.getText());
                 btnStart.setBackground(colorDefault);
                 //System.out.println("Stop");
             }

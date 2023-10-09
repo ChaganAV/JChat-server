@@ -1,5 +1,5 @@
 package model;
 
-public interface Resiver {
+public interface Receiver {
     public void working();
 }
