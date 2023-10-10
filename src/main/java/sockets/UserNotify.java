@@ -1,6 +1,6 @@
-package controler;
+package sockets;
 
-import controler.Subscriber;
+import sockets.Subscriber;
 
 public class UserNotify implements Subscriber {
     @Override

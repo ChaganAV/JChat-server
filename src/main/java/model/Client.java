@@ -2,6 +2,11 @@ package model;
 
 import data.Repository;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Client implements Sender {
     // region fields
     private String url = "192.168.9.104";
@@ -9,24 +14,49 @@ public class Client implements Sender {
     private String name;
     private final String MSG_SERVER_501 = "Сервер не доступен";
     private final String MSG_CLIENT_ERROR = "Подключитесь к серверу";
+    private Server server;
     private boolean isConnected;
     // endregion
-    public Client(String name){
+    public Client(String name, Server server){
         this.name = name;
+        this.server = server;
     }
 
     @Override
     public boolean connected() {
+        this.server.connection(this);
         setConnected(true);
         return true;
     }
 
     @Override
-    public boolean sendMessage(String msg) {
-        return true;
+    public void disconnected() {
+        this.server.disconnection(this);
+        setConnected(false);
     }
 
+    @Override
+    public boolean sendMessage(String msg) {
+        LocalDate date = LocalDate.now();
+        try {
+            server.insert(String.format("%s (%s) %s",date.toString(), this.getName(),msg));
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return true;
+    }
+    public List<String> getLog(){
+        List<String> log = new ArrayList<>();
+        try {
+            log = server.select();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+        return log;
+    }
     // region getters
+
     public boolean isConnected() {
         return isConnected;
     }

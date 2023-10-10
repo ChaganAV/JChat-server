@@ -1,4 +1,4 @@
-package controler;
+package sockets;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

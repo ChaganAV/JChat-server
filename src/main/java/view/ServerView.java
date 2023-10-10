@@ -1,8 +1,8 @@
 package view;
 
-import controler.Notify;
-import controler.SocketSrv;
-import controler.UserNotify;
+import sockets.Notify;
+import sockets.SocketSrv;
+import sockets.UserNotify;
 import model.Server;
 
 import javax.swing.*;

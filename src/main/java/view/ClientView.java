@@ -134,8 +134,10 @@ public class ClientView extends JFrame {
         return panel;
     }
 
-    private void responseMessage(String msg) {
-        textMessages.append(msg + "\n");
+    private void getLog() {
+        for (String msg: client.getLog()) {
+            textMessages.append(msg + "\n");
+        }
     }
 
     private void sendMessage(String msg) {
@@ -157,6 +159,7 @@ public class ClientView extends JFrame {
                 btnBoard.setBackground(Color.GREEN);
                 btnBoard.setText("Connected");
                 btnLogin.setText("Logout");
+                getLog();
             }else{
                 textMessages.append(client.getErrorServer() + "\n");
             }
