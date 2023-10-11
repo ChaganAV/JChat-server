@@ -11,6 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerView extends JFrame {
     // region fields
@@ -31,7 +35,9 @@ public class ServerView extends JFrame {
     JButton btnStart = new JButton("Start");
     JButton btnExit = new JButton("Stop");
     // endregion
-    public ServerView(Server server){
+    public ServerView(Server srv){
+        server = srv;
+        server.setView(this);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocation(WINDOW_POSX, WINDOW_POSY);
         setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -49,12 +55,10 @@ public class ServerView extends JFrame {
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                btnStart.setBackground(Color.GREEN);
-                start = true;
-                server.setWork(start);
+                System.out.println("Starting...");
+                startServer();
                 //notify.change(String.valueOf(btnStart.getText()));
                 revalidate();
-                System.out.println("Starting...");
             }
         });
 
@@ -82,9 +86,32 @@ public class ServerView extends JFrame {
         add(footer,BorderLayout.SOUTH);
         setVisible(true);
     }
-
+    private void StopServer(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        addMessage(String.format("%s %s",localDateTime.toString(),"Shutdown server..."));
+        start = false;
+        server.setWork(start);
+    }
     private void startServer(){
-
-
+        LocalDateTime localDateTime = LocalDateTime.now();
+        addMessage(String.format("%s %s",localDateTime.toString(),"Starting..."));
+        btnStart.setBackground(Color.GREEN);
+        start = true;
+        server.setWork(start);
+        getLog();
+    }
+    public void addMessage(String msg){
+        textMessages.append(msg+"\n");
+    }
+    public void getLog(){
+        List<String> log = new ArrayList<>();
+        try {
+            log = server.select();
+            for (String msg:log) {
+                textMessages.append(msg+"\n");
+            }
+        }catch (IOException e){
+            textMessages.append(e.getMessage());
+        }
     }
 }
